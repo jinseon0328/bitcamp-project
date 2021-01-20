@@ -1,14 +1,20 @@
 package com.eomcs.pms;
 
-// 1) 회원 데이터를 입력하는 코드를 메서드로 분리한다.
-// 2) 회원 데이터 목록을 출력하는 코드를 메서드로 분리한다.
-// 3) 프로젝트 데이터를 입력하는 코드를 메서드로 분리한다.
-// 4) 프로젝트 데이터 목록을 출력하는 코드를 메서드로 분리한다.
-// 5) 작업 데이터를 입력하는 코드를 메서드로 분리한다.
-// 6) 작업 데이터 목록을 출력하는 코드를 메서드로 분리한다.
-// 7) 사용자로부터 입력 받는 코드를 메서드로 분리한다.
-// 8) 프롬프트 제목을 파라미터로 받아 출력한다.
-// 9) prompt()를 목적에 따라 더 세분화하여 분리한다.
+import com.eomcs.pms.handler.MemberHandler;
+import com.eomcs.pms.handler.ProjectHandler;
+import com.eomcs.pms.handler.TaskHandler;
+import com.eomcs.util.Prompt;
+
+// 1) 회원 정보 저장할 때 사용할 메모리의 설계도를 정의한다.
+//    - MemberHandler 클래스 안에 Member 클래스를 정의한다.
+//    - Member 클래스를 사용하여 회원 정보를 다룬다.
+// 2) 프로젝트 정보 저장할 때 사용할 메모리의 설계도를 정의한다.
+//    - ProjectHandler 클래스 안에 Project 클래스를 정의한다.
+//    - Project 클래스를 사용하여 프로젝트 정보를 다룬다.
+// 3) 작업 정보 저장할 때 사용할 메모리의 설계도를 정의한다.
+//    - TaskHandler 클래스 안에 Task 클래스를 정의한다.
+//    - Task 클래스를 사용하여 작업 정보를 다룬다.
+//
 public class App {
 
   public static void main(String[] args) {
@@ -48,12 +54,4 @@ public class App {
 
     Prompt.close();
   }
-
 }
-
-
-
-
-
-
-
