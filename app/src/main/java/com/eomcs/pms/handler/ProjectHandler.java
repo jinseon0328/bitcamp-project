@@ -9,9 +9,16 @@ public class ProjectHandler {
 
   // 의존 객체(dependency)를 담을 인스턴스 필드
   // - 메서드가 작업할 때 사용할 객체를 담는다.
-  public MemberHandler memberList;
+  MemberHandler memberList;
   Project[] projects = new Project[LENGTH];
   int size = 0;
+
+  //생성자 정의
+  // -projectHandler가 의존하는 객체를 반드시 주입하도록 강요한다.
+  // 다른 패키지에서 생성자를 사용할 수 있도록 공개한다
+  public ProjectHandler(MemberHandler memberHandler){
+    this.memberList = memberHandler; 
+  }
 
   public void add() {
     System.out.println("[프로젝트 등록]");
