@@ -10,39 +10,10 @@ public class App {
 
   public static void main(String[] args) {
 
-    // 각 게시판 데이터를 저장할 메모리 준비
     BoardHandler boardList = new BoardHandler();
-
-    //------- 설계도를 따라서 저장한 인스턴스 주소 boardList1
-
-    //각 회원 목록 데이터를 저장할 메모리 준비
-    //둘다 공유하는 객체
     MemberHandler memberList = new MemberHandler();
-
-    //각 프로젝트 목록 데이터를 저장할 메모리 준비
-    //-생성자에서 MemberHandler 객체를 주입하라고 강요한다.
-    //-ProjectHandler 객체를 만들려면 반드시 주입해야 한다.
     ProjectHandler projectList = new ProjectHandler(memberList);
-
-
-
-    //projectHandler가 의존하는 객체(dependency)를 주입한다.
-    // add() 메서드를 호출할 때마다 파라미터에 넘기는 대신에
-    // 계속 사용할 수 있도록 인스턴트 필드에 담아 놓는다.
-    //프로젝트핸들러에도 주고
-    //projectList.memberList = memberList;
-
-    //taskHandler가 의존하는 객체(dependency)를 주입한다.
-    //태스크핸들러에도 주고
-    //taskList.memberList = memberList;
-
-    //각 작업 목록 데이터를 저장할 메모리 준비
-    //TaskHandler taskList = new TaskHandler();
-    //각 프로젝트 목록 데이터를 저장할 메모리 준비
-    //-생성자에서 MemberHandler 객체를 주입하라고 강요한다.
-    //-ProjectHandler 객체를 만들려면 반드시 주입해야 한다.
     TaskHandler taskList = new TaskHandler(memberList);
-
 
 
     loop:
@@ -56,17 +27,44 @@ public class App {
           case "/member/list":
             memberList.list();
             break;
+          case "/member/ detail":
+            memberList.detail();
+            break;  
+          case "/member/update":
+            memberList.update();
+            break; 
+          case "/member/delete":
+            memberList.delete();
+            break;
           case "/project/add":
             projectList.add();
             break;
           case "/project/list":
             projectList.list();
             break;
+          case "/project/detail": 
+            projectList.detail();
+            break;  
+          case "/project/update":
+            projectList.update();
+            break; 
+          case "/project/delete":
+            projectList.delete();
+            break;
           case "/task/add":
             taskList.add();
             break;
           case "/task/list":
             taskList.list();
+            break;
+          case "/task/detail": 
+            taskList.detail();
+            break;  
+          case "/task/update":
+            taskList.update();
+            break; 
+          case "/task/delete":
+            taskList.delete();
             break;
           case "/board/add":
             boardList.add();
@@ -76,10 +74,10 @@ public class App {
             break;
           case "/board/detail":
             boardList.detail();
-            break;
+            break;  
           case "/board/update":
             boardList.update();
-            break;
+            break; 
           case "/board/delete":
             boardList.delete();
             break;
