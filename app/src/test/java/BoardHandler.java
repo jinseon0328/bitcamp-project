@@ -75,6 +75,7 @@ public class BoardHandler {
       last = node; // 새 상자가 마지막 상자가 되게 한다.
       //전의 lastBox 주소를 없애고 새 박스 주소를 넣는다
     }
+    
     this.size++;
 
     System.out.println("게시글을 등록하였습니다.");
@@ -174,15 +175,20 @@ public class BoardHandler {
           } else {
             cursor.prev.next = cursor.next;
             if(cursor.next != null) {
-              cursor.prev = cursor.prev;
+              cursor.next.prev = cursor.prev;
+              
+              /* 이렇게 가비지가 된 객체를 없애주는 것이 좋지만,
+               * 요즘은 이렇게 하지 않아도 JVM이 알아서 삭제해준다.
               cursor.prev = null; //가비지가 된 객체가 기존 객체를 가리키지 않도록 만든다.
               cursor.next = null; //가비지가 된 객체가 기존 객체를 가리키지 않도록 만든다.
+              */
               break;
             }
           }
           if (cursor == last) {
             last = cursor.prev;
           }
+          this.size--;
           break;
         }
         cursor = cursor.next;

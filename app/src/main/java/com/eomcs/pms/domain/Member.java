@@ -10,5 +10,4 @@ public class Member {
   public String photo;
   public String tel;
   public Date registeredDate;  
-
 }

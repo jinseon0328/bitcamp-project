@@ -1,14 +1,15 @@
 package com.eomcs.pms.handler;
 
 import java.util.Arrays;
+import org.w3c.dom.Node;
+import com.eomcs.pms.domain.Board;
 import com.eomcs.pms.domain.Member;
 import com.eomcs.util.Prompt;
 
 public class MemberHandler {
 
-  static final int DEFAULT_CAPACITY = 3;
-
-  Member[] members = new Member[DEFAULT_CAPACITY];  // 레퍼런스 배열 준비  
+  Node first;
+  Node last;
   int size = 0;
 
   public void add() {
@@ -24,29 +25,33 @@ public class MemberHandler {
     m.tel = Prompt.inputString("전화? ");
     m.registeredDate = new java.sql.Date(System.currentTimeMillis());
 
-
-    if(this.size >= this.members.length) {
-      this.members = Arrays.copyOf(this.members, this.size + (this.size >> 1));
-      /*Member[] arr = new Member[this.size + (this.size >> 1)] ;
-      for (int i = 0; i < this.size; i++) {
-        arr[i] = this.members[i];
-      }
-      members = arr;*/
-
+    Node node = new Node(m);
+    
+    if (last == null) {
+      last = node;
+      first = node;
+    } else {
+      last.next = node;
+      node.prev = last;
     }
-
-    this.members[this.size++] = m;
+    
+    this.size++
+    System.out.println("회원을 등록하였습니다");
   }
 
   public void list() {
     System.out.println("[회원 목록]");
 
-    for (int i = 0; i < this.size; i++) {
-      Member m = this.members[i];
+    Node cursor = first;
+    
+    while (cursor != null) {
+      Member m = cursor.member;
       // 번호, 이름, 이메일, 전화, 가입일
       System.out.printf("%d, %s, %s, %s, %s\n", // 출력 형식 지정
           m.no, m.name, m.email, m.tel, m.registeredDate);
     }
+    
+    cursor = cursor.next;
   }
 
   public boolean exist(String name) {
@@ -118,19 +123,38 @@ public class MemberHandler {
 
     int no = Prompt.inputInt("번호? ");
 
-    int i = indexOf(no);
-    if (i == -1) {
-      System.out.println("해당 번호의 회원이 없습니다.");
+    Member member = findByNo(no);
+    if (member == null) {
+      System.out.println("해당 번호의 게시글이 없습니다.");
       return;
     }
 
     String input = Prompt.inputString("정말 삭제하시겠습니까?(y/N) ");
 
     if (input.equalsIgnoreCase("Y")) {
-      for (int x = i + 1; x < this.size; x++) {
-        this.members[x-1] = this.members[x];
+      Node cursor = first;
+      while (cursor != null) {
+        if (cursor.member == member) {
+          if (first == last) {
+            first = last = null;
+            break;
+          }
+          if (cursor == first) {
+            first = cursor.next;
+            cursor.prev = null;
+          } else {
+            cursor.prev.next = cursor.next;
+            if (cursor.next != null) {
+              cursor.next.prev = cursor.prev;
+            }
+          }
+           if (cursor == last) {
+             last = cursor.prev;
+           }
+           break;
+        }
+        cursor = cursor.next;
       }
-      members[--this.size] = null; // 앞으로 당긴 후 맨 뒤의 항목은 null로 설정한다.
 
       System.out.println("회원을 삭제하였습니다.");
 
@@ -140,25 +164,29 @@ public class MemberHandler {
 
   }
 
-  // 회원 번호에 해당하는 인스턴스를 배열에서 찾아 그 인덱스를 리턴한다. 
-  int indexOf(int memberNo) {
-    for (int i = 0; i < this.size; i++) {
-      Member member = this.members[i];
-      if (member.no == memberNo) {
-        return i;
-      }
-    }
-    return -1;
-  }
 
   // 회원 번호에 해당하는 인스턴스를 찾아 리턴한다.
   Member findByNo(int memberNo) {
-    int i = indexOf(memberNo);
-    if (i == -1) 
-      return null;
-    else 
-      return this.members[i];
+    Node cursor = first;
+    while (cursor != null) {
+      Member m = cursor.member;
+      if(m.no == memberNo) {
+        return m;
+      }
+      cursor = cursor.next;
+    }
+    return null;
   }
+  
+  Static class Node {
+  Member member;
+  Node next;
+  Node prev;
+  
+  Node(Member m) {
+    this.member = m;
+  }
+}
 }
 
 
