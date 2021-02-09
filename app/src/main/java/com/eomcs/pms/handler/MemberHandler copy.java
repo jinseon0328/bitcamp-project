@@ -1,13 +1,17 @@
 package com.eomcs.pms.handler;
 
 import com.eomcs.pms.domain.Member;
-import com.eomcs.util.Iterator;
 import com.eomcs.util.List;
+import com.eomcs.util.ListIterator;
 import com.eomcs.util.Prompt;
 
 public class MemberHandler {
 
   private List memberList = new List();
+
+  public List getMemberList() {
+    return this.memberList;
+  }
 
   public void add() {
     System.out.println("[회원 등록]");
@@ -27,10 +31,10 @@ public class MemberHandler {
     System.out.println("회원을 등록하였습니다.");
   }
 
-  public void list() throws CloneNotSupportedException{
+  public void list() {
     System.out.println("[회원 목록]");
 
-    Iterator iterator = memberList.iterator();
+    ListIterator iterator = new ListIterator(this.memberList);
 
     while (iterator.hasNext()) {
       Member m = (Member) iterator.next();
@@ -140,12 +144,11 @@ public class MemberHandler {
     }
   }
 
-  private Member findByNo(int memberNo) {
+  private Member findByNo(int boardNo) {
     Object[] list = memberList.toArray();
     for (Object obj : list) {
-      // 처음부터 끝까지 찾을 때는 :를 쓰고 아닐 때는 세미콜론을 쓴다.
       Member m = (Member) obj;
-      if (m.getNo() == memberNo) {
+      if (m.getNo() == boardNo) {
         return m;
       }
     }
@@ -155,7 +158,6 @@ public class MemberHandler {
   private Member findByName(String name) {
     Object[] list = memberList.toArray();
     for (Object obj : list) {
-      // 처음부터 끝까지 찾을 때는 :를 쓰고 아닐 때는 세미콜론을 쓴다.
       Member m = (Member) obj;
       if (m.getName().equals(name)) {
         return m;
@@ -164,3 +166,9 @@ public class MemberHandler {
     return null;
   }
 }
+
+
+
+
+
+

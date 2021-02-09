@@ -2,8 +2,8 @@ package com.eomcs.pms.handler;
 
 import java.sql.Date;
 import com.eomcs.pms.domain.Board;
-import com.eomcs.util.Iterator;
 import com.eomcs.util.List;
+import com.eomcs.util.ListIterator;
 import com.eomcs.util.Prompt;
 
 public class BoardHandler {
@@ -26,14 +26,12 @@ public class BoardHandler {
     System.out.println("게시글을 등록하였습니다.");
   }
 
-
-  public void list() throws CloneNotSupportedException {
+  public void list() {
     System.out.println("[게시글 목록]");
 
-    Iterator iterator = boardList.iterator();
+    ListIterator iterator = new ListIterator(this.boardList);
 
     while (iterator.hasNext()) {
-      // 우선 Object에서 받아서 Board로 형변환해야 한다
       Board b = (Board) iterator.next();
       // 번호, 제목, 등록일, 작성자, 조회수, 좋아요
       System.out.printf("%d, %s, %s, %s, %d, %d\n", 
@@ -98,7 +96,7 @@ public class BoardHandler {
 
     int no = Prompt.inputInt("번호? ");
 
-    Board board  = findByNo(no);
+    Board board = findByNo(no);
     if (board == null) {
       System.out.println("해당 번호의 게시글이 없습니다.");
       return;
@@ -107,7 +105,7 @@ public class BoardHandler {
     String input = Prompt.inputString("정말 삭제하시겠습니까?(y/N) ");
 
     if (input.equalsIgnoreCase("Y")) {
-      boardList.delete(board);  //오버로딩한 메서드를 사용하여 삭제한다.
+      boardList.delete(board); // 오버로딩한 메서드를 사용하여 삭제한다.
 
       System.out.println("게시글을 삭제하였습니다.");
 
@@ -117,12 +115,9 @@ public class BoardHandler {
 
   }
 
-
-
   private Board findByNo(int boardNo) {
     Object[] list = boardList.toArray();
     for (Object obj : list) {
-      // 처음부터 끝까지 찾을 때는 :를 쓰고 아닐 때는 세미콜론을 쓴다.
       Board b = (Board) obj;
       if (b.getNo() == boardNo) {
         return b;
@@ -130,4 +125,11 @@ public class BoardHandler {
     }
     return null;
   }
+
 }
+
+
+
+
+
+

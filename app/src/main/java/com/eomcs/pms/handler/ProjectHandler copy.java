@@ -2,8 +2,8 @@ package com.eomcs.pms.handler;
 
 import java.sql.Date;
 import com.eomcs.pms.domain.Project;
-import com.eomcs.util.Iterator;
 import com.eomcs.util.List;
+import com.eomcs.util.ListIterator;
 import com.eomcs.util.Prompt;
 
 public class ProjectHandler {
@@ -39,10 +39,10 @@ public class ProjectHandler {
     System.out.println("프로젝트를 등록했습니다.");
   }
 
-  public void list() throws CloneNotSupportedException {
+  public void list() {
     System.out.println("[프로젝트 목록]");
 
-    Iterator iterator = projectList.iterator();
+    ListIterator iterator = new ListIterator(this.projectList);
 
     while (iterator.hasNext()) {
       Project p = (Project) iterator.next();
@@ -120,7 +120,7 @@ public class ProjectHandler {
 
     Project project = findByNo(no);
     if (project == null) {
-      System.out.println("해당 번호의 프로젝트이 없습니다.");
+      System.out.println("해당 번호의 프로젝트가 없습니다.");
       return;
     }
 
@@ -136,12 +136,9 @@ public class ProjectHandler {
 
   }
 
-
-
   private Project findByNo(int projectNo) {
     Object[] list = projectList.toArray();
     for (Object obj : list) {
-      // 처음부터 끝까지 찾을 때는 :를 쓰고 아닐 때는 세미콜론을 쓴다.
       Project p = (Project) obj;
       if (p.getNo() == projectNo) {
         return p;
@@ -149,4 +146,13 @@ public class ProjectHandler {
     }
     return null;
   }
+
 }
+
+
+
+
+
+
+
+

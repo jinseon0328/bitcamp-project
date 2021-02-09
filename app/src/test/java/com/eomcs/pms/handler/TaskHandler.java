@@ -35,11 +35,10 @@ public class TaskHandler {
     System.out.println("작업을 등록했습니다.");
   }
 
-  public void list() throws CloneNotSupportedException{
+  public void list() throws CloneNotSupportedException {
     System.out.println("[작업 목록]");
 
     Iterator iterator = taskList.iterator();
-    //이터레이터 객체에 넣게       테스크리스트야, 인터페이스 규칙인 이터레이터 좀 줘봐
 
     while (iterator.hasNext()) {
       Task t = (Task) iterator.next();
@@ -137,15 +136,12 @@ public class TaskHandler {
     }
   }
 
-
-
   private Task findByNo(int taskNo) {
     Object[] list = taskList.toArray();
     for (Object obj : list) {
-      // 처음부터 끝까지 찾을 때는 :를 쓰고 아닐 때는 세미콜론을 쓴다.
-      Task b = (Task) obj;
-      if (b.getNo() == taskNo) {
-        return b;
+      Task t = (Task) obj;
+      if (t.getNo() == taskNo) {
+        return t;
       }
     }
     return null;

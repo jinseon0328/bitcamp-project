@@ -3,14 +3,16 @@ package com.eomcs.util;
 public class Stack extends List implements Cloneable {
 
   public Object push(Object item) {
-    // 슈퍼 클래스 List의 메서드를 사용하여 항목을 추가한다. 
+    // 수퍼 클래스 List의 메서드를 사용하여 항목을 추가한다.
     this.add(item);
     return item;
   }
+
   public Object pop() {
-    // 슈퍼 클래스 List의 메서드를 사용하여 항목을 꺼낸다.
-    return this.delete(this.size() -1);
+    // 수퍼 클래스 List의 메서드를 사용하여 항목을 꺼낸다.
+    return this.delete(this.size - 1);
   }
+
   @Override
   public Stack clone() throws CloneNotSupportedException {
 
@@ -23,9 +25,8 @@ public class Stack extends List implements Cloneable {
       stack.push(this.get(i));
     }
 
-    // 복제한 스택을 리턴한다.
+    // 3) 복제한 스택을 리턴한다.
     return stack;
-
   }
 
   @Override
@@ -33,18 +34,20 @@ public class Stack extends List implements Cloneable {
     Stack stack = this.clone();
 
     return new Iterator() {
+
       @Override
       public boolean hasNext() {
-        return stack.size()> 0;
+        return Stack.this.size() > 0;
       }
+
       @Override
       public Object next() {
-        return stack.pop();
+        return Stack.this.pop();
       }
     };
 
   }
 
 
-
 }
+

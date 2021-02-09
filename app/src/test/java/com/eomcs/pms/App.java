@@ -15,6 +15,7 @@ public class App {
   static Stack commandStack = new Stack();
   static Queue commandQueue = new Queue();
 
+
   public static void main(String[] args) throws CloneNotSupportedException {
 
     BoardHandler boardHandler = new BoardHandler();
@@ -24,13 +25,12 @@ public class App {
 
     loop:
       while (true) {
-
         String command = com.eomcs.util.Prompt.inputString("명령> ");
 
-        if(command.length() == 0) // 사용자가 빈 문자열을 입력하면 다시 입력하도록 요구한다.
+        if (command.length() == 0) // 사용자가 빈 문자열을 입력하면 다시 입력하도록 요구한다.
           continue;
 
-        //사용자가 입력한 명령을 보관해둔다.
+        // 사용자가 입력한 명령을 보관해둔다.
         commandStack.push(command);
         commandQueue.offer(command);
 
@@ -94,11 +94,12 @@ public class App {
             break; 
           case "/board/delete":
             boardHandler.delete();
-          case "history": // <== history 명령 추가
-            printCommendHistory(commandStack.iterator());
             break;
-          case "history2": // <== history2 명령 추가
-            printCommendHistory(commandQueue.iterator());;
+          case "history":
+            printCommandHistory(commandStack.iterator());
+            break;
+          case "history2": 
+            printCommandHistory(commandQueue.iterator());
             break;
           case "quit":
           case "exit":
@@ -112,18 +113,17 @@ public class App {
 
     Prompt.close();
   }
-  static void printCommendHistory(Iterator iterator) {
 
+  static void printCommandHistory(Iterator iterator) {
     int count = 0;
     while (iterator.hasNext()) {
       System.out.println(iterator.next());
       if ((++count % 5) == 0) {
-        String input = Prompt.inputString(":  ");
-        if (input.contentEquals("q")) {
+        String input = Prompt.inputString(": ");
+        if (input.equalsIgnoreCase("q")) {
           break;
         }
       }
     }
   }
-
 }
