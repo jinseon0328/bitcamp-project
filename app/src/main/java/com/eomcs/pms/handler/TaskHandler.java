@@ -8,7 +8,7 @@ import com.eomcs.util.Prompt;
 
 public class TaskHandler {
 
-  private List taskList = new List();
+  private List<Task> taskList = new List<>();
 
   private MemberHandler memberHandler;
 
@@ -38,11 +38,11 @@ public class TaskHandler {
   public void list() throws CloneNotSupportedException{
     System.out.println("[작업 목록]");
 
-    Iterator iterator = taskList.iterator();
+    Iterator<Task> iterator = taskList.iterator();
     //이터레이터 객체에 넣게       테스크리스트야, 인터페이스 규칙인 이터레이터 좀 줘봐
 
     while (iterator.hasNext()) {
-      Task t = (Task) iterator.next();
+      Task t = iterator.next();
       System.out.printf("%d, %s, %s, %s, %s\n", 
           t.getNo(), t.getContent(), t.getDeadline(), getStatusLabel(t.getStatus()), t.getOwner());
     }
@@ -140,12 +140,11 @@ public class TaskHandler {
 
 
   private Task findByNo(int taskNo) {
-    Object[] list = taskList.toArray();
-    for (Object obj : list) {
+    Task[] list = taskList.toArray(new Task[taskList.size()]);
+    for (Task t : list) {
       // 처음부터 끝까지 찾을 때는 :를 쓰고 아닐 때는 세미콜론을 쓴다.
-      Task b = (Task) obj;
-      if (b.getNo() == taskNo) {
-        return b;
+      if (t.getNo() == taskNo) {
+        return t;
       }
     }
     return null;

@@ -12,8 +12,8 @@ import com.eomcs.util.Stack;
 public class App {
 
   // 사용자가 입력한 명령을 저장할 컬렉션 객체 준비
-  static Stack commandStack = new Stack();
-  static Queue commandQueue = new Queue();
+  static Stack<String> commandStack = new Stack<>();
+  static Queue<String> commandQueue = new Queue<>();
 
   public static void main(String[] args) throws CloneNotSupportedException {
 
@@ -94,6 +94,7 @@ public class App {
             break; 
           case "/board/delete":
             boardHandler.delete();
+            break;
           case "history": // <== history 명령 추가
             printCommendHistory(commandStack.iterator());
             break;
@@ -112,7 +113,7 @@ public class App {
 
     Prompt.close();
   }
-  static void printCommendHistory(Iterator iterator) {
+  static void printCommendHistory(Iterator<String> iterator) {
 
     int count = 0;
     while (iterator.hasNext()) {

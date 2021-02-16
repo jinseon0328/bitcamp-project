@@ -8,7 +8,7 @@ import com.eomcs.util.Prompt;
 
 public class BoardHandler {
 
-  private List boardList = new List();
+  private List<Board> boardList = new List<>();
 
   public void add() {
     System.out.println("[게시글 등록]");
@@ -30,11 +30,31 @@ public class BoardHandler {
   public void list() throws CloneNotSupportedException {
     System.out.println("[게시글 목록]");
 
-    Iterator iterator = boardList.iterator();
+    // 방법 1)
+    //Board[] arr = new Board[boardList.size()];
+    //BoardList.toArray(arr);
+    // 내가 넘겨주는 배열이 넣을 값보다 작다면 배열에 아무것도 안 담긴다
+
+    // 방법 2) - 선생님 추천 방법
+    //    Board[] arr = boardList.toArray(new Board[boardList.size()]);
+    //    // 내가 넘겨주는 배열이 넣을 값보다 작다면 새로 배열을 만들어서 넘겨줄 거고
+    //
+    //    for (Board b : arr) {
+    //      System.out.printf("%d, %s, %s, %s, %d, %d\n", 
+    //          b.getNo(), 
+    //          b.getTitle(), 
+    //          b.getRegisteredDate(), 
+    //          b.getWriter(), 
+    //          b.getViewCount(),
+    //          b.getLike());
+    //    }
+
+    // Iterator 사용하여 데이터 조회하기
+    Iterator<Board> iterator = boardList.iterator();
 
     while (iterator.hasNext()) {
       // 우선 Object에서 받아서 Board로 형변환해야 한다
-      Board b = (Board) iterator.next();
+      Board b = iterator.next();
       // 번호, 제목, 등록일, 작성자, 조회수, 좋아요
       System.out.printf("%d, %s, %s, %s, %d, %d\n", 
           b.getNo(), 
@@ -44,6 +64,7 @@ public class BoardHandler {
           b.getViewCount(),
           b.getLike());
     }
+
   }
 
   public void detail() {
@@ -120,10 +141,12 @@ public class BoardHandler {
 
 
   private Board findByNo(int boardNo) {
-    Object[] list = boardList.toArray();
-    for (Object obj : list) {
+    Board[] list = boardList.toArray(new Board[boardList.size()]);
+    //Board[] arr = boardList.toArray(new Board[0]); 게으른 선배 
+    //이렇게 하면 가비지가 돼서 
+    // 쓰면 안되는 방법이다.
+    for (Board b : list) {
       // 처음부터 끝까지 찾을 때는 :를 쓰고 아닐 때는 세미콜론을 쓴다.
-      Board b = (Board) obj;
       if (b.getNo() == boardNo) {
         return b;
       }
