@@ -1,13 +1,13 @@
 package com.eomcs.pms.handler;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import com.eomcs.pms.domain.Member;
-import com.eomcs.util.Iterator;
-import com.eomcs.util.List;
 import com.eomcs.util.Prompt;
 
 public class MemberHandler {
 
-  private List<Member> memberList = new List<>();
+  private ArrayList<Member> memberList = new ArrayList<>();
 
   public void add() {
     System.out.println("[회원 등록]");
@@ -103,7 +103,7 @@ public class MemberHandler {
     String input = Prompt.inputString("정말 삭제하시겠습니까?(y/N) ");
 
     if (input.equalsIgnoreCase("Y")) {
-      memberList.delete(member);
+      memberList.remove(member);
       System.out.println("회원을 삭제하였습니다.");
 
     } else {

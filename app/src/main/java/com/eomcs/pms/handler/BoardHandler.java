@@ -1,14 +1,14 @@
 package com.eomcs.pms.handler;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
 import com.eomcs.pms.domain.Board;
-import com.eomcs.util.Iterator;
-import com.eomcs.util.List;
 import com.eomcs.util.Prompt;
 
 public class BoardHandler {
 
-  private List<Board> boardList = new List<>();
+  private ArrayList<Board> boardList = new ArrayList<>();
 
   public void add() {
     System.out.println("[게시글 등록]");
@@ -128,7 +128,7 @@ public class BoardHandler {
     String input = Prompt.inputString("정말 삭제하시겠습니까?(y/N) ");
 
     if (input.equalsIgnoreCase("Y")) {
-      boardList.delete(board);  //오버로딩한 메서드를 사용하여 삭제한다.
+      boardList.remove(board);  //오버로딩한 메서드를 사용하여 삭제한다.
 
       System.out.println("게시글을 삭제하였습니다.");
 
