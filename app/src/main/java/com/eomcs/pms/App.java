@@ -1,12 +1,38 @@
 package com.eomcs.pms;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import com.eomcs.pms.handler.BoardHandler;
-import com.eomcs.pms.handler.MemberHandler;
-import com.eomcs.pms.handler.ProjectHandler;
-import com.eomcs.pms.handler.TaskHandler;
+import com.eomcs.pms.domain.Board;
+import com.eomcs.pms.domain.Member;
+import com.eomcs.pms.domain.Project;
+import com.eomcs.pms.domain.Task;
+import com.eomcs.pms.handler.BoardAddHandler;
+import com.eomcs.pms.handler.BoardDeleteHandler;
+import com.eomcs.pms.handler.BoardDetailHandler;
+import com.eomcs.pms.handler.BoardListHandler;
+import com.eomcs.pms.handler.BoardSearchHandler;
+import com.eomcs.pms.handler.BoardUpdateHandler;
+import com.eomcs.pms.handler.Command;
+import com.eomcs.pms.handler.HelloHandler;
+import com.eomcs.pms.handler.MemberAddHandler;
+import com.eomcs.pms.handler.MemberDeleteHandler;
+import com.eomcs.pms.handler.MemberDetailHandler;
+import com.eomcs.pms.handler.MemberListHandler;
+import com.eomcs.pms.handler.MemberUpdateHandler;
+import com.eomcs.pms.handler.MemberValidatorHandler;
+import com.eomcs.pms.handler.ProjectAddHandler;
+import com.eomcs.pms.handler.ProjectDeleteHandler;
+import com.eomcs.pms.handler.ProjectDetailHandler;
+import com.eomcs.pms.handler.ProjectListHandler;
+import com.eomcs.pms.handler.ProjectUpdateHandler;
+import com.eomcs.pms.handler.TaskAddHandler;
+import com.eomcs.pms.handler.TaskDeleteHandler;
+import com.eomcs.pms.handler.TaskDetailHandler;
+import com.eomcs.pms.handler.TaskListHandler;
+import com.eomcs.pms.handler.TaskUpdateHandler;
 import com.eomcs.util.Prompt;
 
 public class App {
@@ -17,10 +43,44 @@ public class App {
 
   public static void main(String[] args) throws CloneNotSupportedException {
 
-    BoardHandler boardHandler = new BoardHandler();
-    MemberHandler memberHandler = new MemberHandler();
-    ProjectHandler projectHandler = new ProjectHandler(memberHandler);
-    TaskHandler taskHandler = new TaskHandler(memberHandler);
+    ArrayList<Board> boardList = new ArrayList<>();
+    ArrayList<Member> memberList = new ArrayList<>();
+    LinkedList<Project> projectList = new LinkedList<>();
+    LinkedList<Task> taskList = new LinkedList<>();
+
+    // 사용자 명령을 처리하는 객체를 맵에 Command    
+    HashMap<String, Command> commandMap = new HashMap<>();
+
+    commandMap.put("/board/add", new BoardAddHandler(boardList));
+    commandMap.put("/board/list", new BoardListHandler(boardList));
+    commandMap.put("/board/delete", new BoardDeleteHandler(boardList));
+    commandMap.put("/board/detail", new BoardDetailHandler(boardList));
+    commandMap.put("/board/update", new BoardUpdateHandler(boardList));
+
+    commandMap.put("/member/add", new MemberAddHandler(memberList));
+    commandMap.put("/member/list", new MemberListHandler(memberList));
+    commandMap.put("/member/delete", new MemberDetailHandler(memberList));
+    commandMap.put("/member/detail", new MemberUpdateHandler(memberList));
+    commandMap.put("/member/update", new MemberDeleteHandler(memberList));
+    MemberValidatorHandler memberValidatorHandler = new MemberValidatorHandler(memberList);
+
+    commandMap.put("/project/add", new ProjectAddHandler(projectList, memberValidatorHandler));
+    commandMap.put("/project/list", new ProjectListHandler(projectList));
+    commandMap.put("/project/delete", new ProjectDetailHandler(projectList));
+    commandMap.put("/project/detail", new ProjectUpdateHandler(projectList, memberValidatorHandler));
+    commandMap.put("/project/update", new  ProjectDeleteHandler(projectList));
+
+
+    commandMap.put("/task/add", new TaskAddHandler(taskList, memberValidatorHandler));
+    commandMap.put("/task/list", new TaskListHandler(taskList));
+    commandMap.put("/task/delete", new TaskDetailHandler(taskList));
+    commandMap.put("/task/detail", new TaskUpdateHandler(taskList, memberValidatorHandler));
+    commandMap.put("/task/update", new TaskDeleteHandler(taskList));
+
+    commandMap.put("/board/boardserch", new BoardSearchHandler(boardList));
+
+    commandMap.put("/hello", new HelloHandler());
+
 
     loop:
       while (true) {
@@ -37,66 +97,6 @@ public class App {
         try {
           // 트라이블럭으로 예외를 장벽을 막았다
           switch (command) {
-            case "/member/add":
-              memberHandler.add();
-              break;
-            case "/member/list":
-              memberHandler.list();
-              break;
-            case "/member/detail":
-              memberHandler.detail();
-              break;  
-            case "/member/update":
-              memberHandler.update();
-              break; 
-            case "/member/delete":
-              memberHandler.delete();
-              break;
-            case "/project/add":
-              projectHandler.add();
-              break;
-            case "/project/list":
-              projectHandler.list();
-              break;
-            case "/project/detail": 
-              projectHandler.detail();
-              break;  
-            case "/project/update":
-              projectHandler.update();
-              break; 
-            case "/project/delete":
-              projectHandler.delete();
-              break;
-            case "/task/add":
-              taskHandler.add();
-              break;
-            case "/task/list":
-              taskHandler.list();
-              break;
-            case "/task/detail": 
-              taskHandler.detail();
-              break;  
-            case "/task/update":
-              taskHandler.update();
-              break; 
-            case "/task/delete":
-              taskHandler.delete();
-              break;
-            case "/board/add":
-              boardHandler.add();
-              break;
-            case "/board/list":
-              boardHandler.list();
-              break;
-            case "/board/detail":
-              boardHandler.detail();
-              break;  
-            case "/board/update":
-              boardHandler.update();
-              break; 
-            case "/board/delete":
-              boardHandler.delete();
-              break;
             case "history": // <== history 명령 추가
               printCommendHistory(commandStack.iterator());
               break;
@@ -108,7 +108,14 @@ public class App {
               System.out.println("안녕!");
               break loop;
             default:
-              System.out.println("실행할 수 없는 명령입니다.");
+              Command commandHandler = commandMap.get(command);
+              if (commandHandler == null) {
+                System.out.println("실행할 수 없는 명령입니다.");
+              } else {
+                commandHandler.service();
+                // 이제 명령어와 그 명령어를 처리하는 핸들러를 추가할 때마다
+                // case 문을 추가할 필요가 없다.
+              }
           }
         } catch (Exception e) {
           System.out.println("------------------------------------------------");
@@ -134,5 +141,4 @@ public class App {
       }
     }
   }
-
 }

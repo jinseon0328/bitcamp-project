@@ -1,6 +1,6 @@
 package com.eomcs.pms;
 
-import com.eomcs.pms.handler.BoardHandler;
+import com.eomcs.pms.handler.AbstractBoardHandler;
 import com.eomcs.pms.handler.MemberHandler;
 import com.eomcs.pms.handler.ProjectHandler;
 import com.eomcs.pms.handler.TaskHandler;
@@ -18,7 +18,7 @@ public class App {
 
   public static void main(String[] args) throws CloneNotSupportedException {
 
-    BoardHandler boardHandler = new BoardHandler();
+    AbstractBoardHandler abstractBoardHandler = new AbstractBoardHandler();
     MemberHandler memberHandler = new MemberHandler();
     ProjectHandler projectHandler = new ProjectHandler(memberHandler);
     TaskHandler taskHandler = new TaskHandler(memberHandler);
@@ -81,19 +81,19 @@ public class App {
             taskHandler.delete();
             break;
           case "/board/add":
-            boardHandler.add();
+            abstractBoardHandler.add();
             break;
           case "/board/list":
-            boardHandler.list();
+            abstractBoardHandler.list();
             break;
           case "/board/detail":
-            boardHandler.detail();
+            abstractBoardHandler.detail();
             break;  
           case "/board/update":
-            boardHandler.update();
+            abstractBoardHandler.update();
             break; 
           case "/board/delete":
-            boardHandler.delete();
+            abstractBoardHandler.delete();
             break;
           case "history":
             printCommandHistory(commandStack.iterator());
