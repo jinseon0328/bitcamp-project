@@ -1,19 +1,13 @@
 package com.eomcs.pms;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.sql.Date;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import com.eomcs.pms.domain.Board;
 import com.eomcs.pms.domain.Member;
 import com.eomcs.pms.domain.Project;
@@ -44,31 +38,66 @@ import com.eomcs.pms.handler.TaskListHandler;
 import com.eomcs.pms.handler.TaskUpdateHandler;
 import com.eomcs.util.Prompt;
 
-public class App {
+public class App01 {
 
   // 사용자가 입력한 명령을 저장할 컬렉션 객체 준비
   static ArrayDeque<String> commandStack = new ArrayDeque<>();
   static LinkedList<String> commandQueue = new LinkedList<>();
 
-  static List<Board> boardList;
-  static List<Member> memberList;
-  static List<Project> projectList;
-  static List<Task> taskList;
-
-  static File boardFile = new File("boards.data");
-  static File memberFile = new File("members.data");
-  static File projectFile = new File("projects.data");
-  static File taskFile = new File("tasks.data");
-
-
-
   public static void main(String[] args) {
 
-    boardList = loadObjects(boardFile, Board.class);
-    memberList = loadObjects(memberFile, Member.class);
-    projectList = loadObjects(projectFile, Project.class);
-    taskList = loadObjects(taskFile, Task.class);
+    ArrayList<Board> boardList = new ArrayList<>();
+    ArrayList<Member> memberList = new ArrayList<>();
+    LinkedList<Project> projectList = new LinkedList<>();
+    LinkedList<Task> taskList = new LinkedList<>();
 
+    // 파일에서 데이터를 읽어온다(데이터 로딩)
+    try (FileInputStream in = new FileInputStream("boards.data")) {
+      int size = in.read() <<8 | in.read();
+
+      // 2) 게시글 개수만큼 게시글을 읽는다.
+      for (int i = 0; i < size; i++) {
+        //게시글 데이터를 저장할 객체 준비
+        Board b= new Board();
+
+        // 게시글 데이터를 읽어서 객체에 저장
+        b.setNo(in.read() << 24 | in.read() << 16 | in.read() << 8 | in.read());
+
+        int len = in.read() << 8 | in.read();
+        byte[] buf = new byte[len];
+        in.read(buf);
+        b.setTitle(new String(buf, "UTF-8"));
+        // 게시글 객체를 걸렉션에 저장.
+
+        // 게시글 내용 읽어서 저장
+        len = in.read() << 8 | in.read();
+        buf = new byte[len];
+        in.read(buf);
+        b.setContent(new String(buf, "UTF-8"));
+
+        // 게시글 작성자 읽어서 저장
+        len = in.read() << 8 | in.read();
+        buf = new byte[len];
+        in.read(buf);
+        b.setWriter(new String(buf, "UTF-8"));
+
+        // 게시일 읽어서 저장
+        len = in.read() << 8 | in.read();
+        buf = new byte[len];
+        in.read(buf);
+        b.setRegisteredDate(Date.valueOf(new String(buf, "UTF-8")));
+
+        // 게시글 조회수 읽어서 저장
+        b.setViewCount(in.read() << 24 | in.read() << 16 | in.read() << 8 | in.read());
+
+        boardList.add(b);
+      }
+    }catch (Exception e) {
+      System.out.println("게시글 데이터 로딩 중 오류 발생!");
+    }
+
+
+    // 사용자 명령을 처리하는 객체를 맵에 Command    
     HashMap<String, Command> commandMap = new HashMap<>();
 
     commandMap.put("/board/add", new BoardAddHandler(boardList));
@@ -96,6 +125,7 @@ public class App {
     commandMap.put("/task/delete", new TaskDetailHandler(taskList));
     commandMap.put("/task/detail", new TaskUpdateHandler(taskList, memberValidatorHandler));
     commandMap.put("/task/update", new TaskDeleteHandler(taskList));
+
     commandMap.put("/board/boardserch", new BoardSearchHandler(boardList));
 
     commandMap.put("/hello", new HelloHandler());
@@ -145,10 +175,81 @@ public class App {
         System.out.println(); // 이전 명령의 실행을 구분하기 위해 빈 줄 출력
       }
 
-    saveObjects(boardFile, boardList);
-    saveObjects(memberFile, memberList);
-    saveObjects(projectFile, projectList);
-    saveObjects(taskFile, taskList);
+    //게시글 데이터를 파일로 출력한다.
+    try (FileOutputStream out = new FileOutputStream("boards.data")) {
+
+      // boards.data 파일 포맷
+      // - 2바이트 : 저장된 게시글 개수
+      // - n바이트 게시글 데이터
+      // - 4바이트 : 게시글 번호
+      // - 게시글 제목
+      //    -2바이트 : 게시글 제목의 바이트 배열 개수
+      //    -x바이트 : 게시글 제목의 바이트 배열
+      //  - 게시글 내용
+      //    -2바이트 : 게시글 내용의 바이트 배열 개수
+      //    -x바이트 : 게시글 내용의 바이트 배열
+      //  - 작성자
+      //    -2바이트 : 게시글 작성자의 바이트 배열 개수
+      //    -x바이트 : 게시글 작성자의 바이트 배열
+      //  - 등록일
+      //    -2바이트 : 게시글 등록일의 바이트 배열 개수
+      //    -x바이트 : 게시글 등록일의 바이트 배열
+      //  - 조회수
+      //    : 4바이트 게시글 조회수의 바이트 배열
+      int size = boardList.size();
+      out.write(size >> 8);
+      out.write(size);
+      for(Board b : boardList) {
+        // 게시글 번호
+        out.write(b.getNo() >> 24);
+        out.write(b.getNo() >> 16);
+        out.write(b.getNo() >> 8);
+        out.write(b.getNo());
+
+        // 게시글 제목
+        byte[] buf = b.getTitle().getBytes("UTF-8");
+        // - 게시글 제목의 바이트 개수
+        out.write(buf.length >> 8);
+        out.write(buf.length);
+        // - 게시글 제목의 바이트 배열
+        out.write(buf);
+
+        // 게시글 내용
+        // - 게시글 내용의 바이트 개수
+        buf = b.getContent().getBytes("UTF-8");
+        out.write(buf.length >> 8);
+        out.write(buf.length);
+        // - 게시글 내용의 바이트 배열
+        out.write(buf);
+
+        // 작성자
+        // - 게시글 작성자의 바이트 개수
+        buf = b.getWriter().getBytes("UTF-8");
+        out.write(buf.length >> 8);
+        out.write(buf.length);
+        // - 게시글 작성자의 바이트 배열
+        out.write(buf);
+
+        // 작성일
+        // - 작성일의 바이트 개수
+        buf = b.getRegisteredDate().toString().getBytes("UTF-8");
+        out.write(buf.length >> 8);
+        out.write(buf.length);
+        // - 작성일 작성자의 바이트 배열
+        out.write(buf);
+
+        // 조회수
+        out.write(b.getViewCount() >> 24);
+        out.write(b.getViewCount() >> 16);
+        out.write(b.getViewCount() >> 8);
+        out.write(b.getViewCount());
+      }
+      System.out.println("게시글 데이터 저장!");
+    }catch (Exception e) {
+      System.out.println("게시글 데이터를 파일로 저장하는 중에 오류 발생하였습니다.");
+    }
+
+
 
     Prompt.close();
   }
@@ -165,40 +266,4 @@ public class App {
       }
     }
   }
-
-  @SuppressWarnings("unchecked")
-  static <T extends Serializable> List<T> loadObjects(File file, Class<T> dataType) { 
-    //    아무 List가 아니라 Serializable을 구현한 List의 자손들만 올 수 있다
-    // 파일에서 데이터를 읽어온다(데이터 로딩)
-    try (ObjectInputStream in = new ObjectInputStream(
-        new BufferedInputStream(
-            new FileInputStream(file)))) {
-
-      System.out.printf("파일 %s 저장!\n", file.getName());
-      return (List<T>) in.readObject();
-
-    } catch (Exception e) {
-      System.out.printf("파일 %s 저장 중 오류가 발생하였습니다.\n", file.getName());
-      return new ArrayList<T>();
-    }
-
-  }
-
-  static <T extends Serializable> void saveObjects(File file, List<T> dataList) {
-
-    //게시글 데이터를 파일로 출력한다.
-    try (ObjectOutputStream out = new ObjectOutputStream(
-        new BufferedOutputStream(
-            new FileOutputStream(file)))) {
-
-      out.writeObject(dataList);
-
-      System.out.printf("파일 %s 저장!\n", file.getName());
-    }catch (Exception e) {
-      System.out.printf("파일 %s 저장 중 오류가 발생하였습니다.\n", file.getName());
-    }
-  }
-
-
 }
-
