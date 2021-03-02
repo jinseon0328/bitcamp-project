@@ -1,11 +1,9 @@
 package com.eomcs.pms.domain;
 
-import java.io.Serializable;
 import java.sql.Date;
+import com.eomcs.util.CsvObject;
 
-public class Member implements Serializable {
-
-  private static final long serialVersionUID = 1L;
+public class Member implements CsvObject{
   private int no;
   private String name;
   private String email;
@@ -14,8 +12,43 @@ public class Member implements Serializable {
   private String tel;
   private Date registeredDate;
 
+  public Member() {}
 
+  public Member(String csv) {
+    String[] fields = csv.split(",");
+    this.setNo(Integer.parseInt(fields[0]));
+    this.setName(fields[1]);
+    this.setEmail(fields[2]);
+    this.setPassword(fields[3]);
+    this.setPhoto(fields[4]);
+    this.setTel(fields[5]);
+    this.setRegisteredDate(Date.valueOf(fields[6]));
+  }
 
+  @Override
+  public String toCsvString() {
+    return String.format("%d,%s,%s,%s,%s,%s,%s\n",
+        this.getNo(),
+        this.getName(),
+        this.getEmail(),
+        this.getPassword(),
+        this.getPhoto(),
+        this.getTel(),
+        this.getRegisteredDate());
+  } 
+
+  public static Member valueOfCsv(String csv) {
+    String[] fields = csv.split(",");
+    Member m = new Member();
+    m.setNo(Integer.parseInt(fields[0]));
+    m.setName(fields[1]);
+    m.setEmail(fields[2]);
+    m.setPassword(fields[3]);
+    m.setPhoto(fields[4]);
+    m.setTel(fields[5]);
+    m.setRegisteredDate(Date.valueOf(fields[6]));
+    return m;
+  }
 
   @Override
   public int hashCode() {
@@ -26,6 +59,7 @@ public class Member implements Serializable {
     result = prime * result + no;
     return result;
   }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -49,6 +83,7 @@ public class Member implements Serializable {
       return false;
     return true;
   }
+
   public int getNo() {
     return no;
   }

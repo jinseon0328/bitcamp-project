@@ -1,18 +1,58 @@
 package com.eomcs.pms.domain;
 
-import java.io.Serializable;
 import java.sql.Date;
+import com.eomcs.util.CsvObject;
 
-public class Board implements Serializable {
-
-  private static final long serialVersionUID = 1L;
+public class Board implements CsvObject{
   private int no;
   private String title;
   private String content;
   private String writer;
-  private int like;
   private Date registeredDate;
   private int viewCount;
+  private int like;
+
+  public Board() {}
+
+  public Board(String csv) {
+    String[] fields = csv.split(",");
+    this.setNo(Integer.parseInt(fields[0]));
+    this.setTitle(fields[1]);
+    this.setContent(fields[2]);
+    this.setWriter(fields[3]);
+    this.setRegisteredDate(Date.valueOf(fields[4]));
+    this.setViewCount(Integer.parseInt(fields[5]));
+
+  }
+
+
+  @Override
+  public String toCsvString() {
+    return String.format("%d,%s,%s,%s,%s,%d\n", 
+        this.getNo(),
+        this.getTitle(),
+        this.getContent(),
+        this.getWriter(),
+        this.getRegisteredDate(),
+        this.getViewCount());
+  }
+  // 다음과 같이 인스턴스를 생성해주는 메서드를
+  // "factory method"라 부른다.
+  // 팩토리 메서드 패턴
+  // - 인스턴스 생성 과정이 복잡할 때
+  //   인스턴스 생성을 대신 해주는 메서드를 만들어
+  //   그 메서드를 통해 객체를 생성하는 프로그래밍 방식이다.
+  public static Board valueOfCsv(String csv) {
+    String[] fields = csv.split(",");
+    Board b = new Board();
+    b.setNo(Integer.parseInt(fields[0]));
+    b.setTitle(fields[1]);
+    b.setContent(fields[2]);
+    b.setWriter(fields[3]);
+    b.setRegisteredDate(Date.valueOf(fields[4]));
+    b.setViewCount(Integer.parseInt(fields[5]));
+    return b;
+  }
 
 
   @Override
@@ -24,6 +64,7 @@ public class Board implements Serializable {
     result = prime * result + ((writer == null) ? 0 : writer.hashCode());
     return result;
   }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -72,14 +113,6 @@ public class Board implements Serializable {
   public void setWriter(String writer) {
     this.writer = writer;
   }
-
-  public int getLike() {
-    return like;
-  }
-  public void setLike(int like) {
-    this.like = like;
-  }
-
   public Date getRegisteredDate() {
     return registeredDate;
   }
@@ -91,6 +124,12 @@ public class Board implements Serializable {
   }
   public void setViewCount(int viewCount) {
     this.viewCount = viewCount;
+  }
+  public int getLike() {
+    return like;
+  }
+  public void setLike(int like) {
+    this.like = like;
   }
 
 

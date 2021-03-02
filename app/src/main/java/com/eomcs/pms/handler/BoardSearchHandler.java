@@ -5,20 +5,14 @@ import java.util.List;
 import com.eomcs.pms.domain.Board;
 import com.eomcs.util.Prompt;
 
-public class BoardSearchHandler extends AbstractBoardHandler  {
+public class BoardSearchHandler extends AbstractBoardHandler {
 
-  // 특정 클래스를 지정하기 보다는
-  // List 규칙에 따라 사용할 수 있는 객체를 요구하라!
-  // 그러면 훨씬 코드가 유연해진다.
-
-  public BoardSearchHandler(List<Board> boardList){
+  public BoardSearchHandler(List<Board> boardList) {
     super(boardList);
-
   }
 
   @Override
   public void service() {
-
     String keyword = Prompt.inputString("검색어? ");
 
     if (keyword.length() == 0) {
@@ -56,4 +50,11 @@ public class BoardSearchHandler extends AbstractBoardHandler  {
     }
 
   }
+
 }
+
+
+
+
+
+

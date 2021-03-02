@@ -4,9 +4,9 @@ import java.util.List;
 import com.eomcs.pms.domain.Board;
 import com.eomcs.util.Prompt;
 
-public class BoardDetailHandler extends AbstractBoardHandler  {
+public class BoardDetailHandler extends AbstractBoardHandler {
 
-  public BoardDetailHandler(List<Board> boardList){
+  public BoardDetailHandler(List<Board> boardList) {
     super(boardList);
   }
 
@@ -31,6 +31,10 @@ public class BoardDetailHandler extends AbstractBoardHandler  {
     System.out.printf("조회수: %d\n", board.getViewCount());
 
   }
-
-
 }
+
+
+
+
+
+

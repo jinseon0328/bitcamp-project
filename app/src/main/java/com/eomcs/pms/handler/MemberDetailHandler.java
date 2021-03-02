@@ -4,15 +4,10 @@ import java.util.List;
 import com.eomcs.pms.domain.Member;
 import com.eomcs.util.Prompt;
 
-public class MemberDetailHandler extends AbstractMemberHandler  {
+public class MemberDetailHandler extends AbstractMemberHandler {
 
-  // 특정 클래스를 지정하기 보다는
-  // List 규칙에 따라 사용할 수 있는 객체를 요구하라!
-  // 그러면 훨씬 코드가 유연해진다.
-
-  public MemberDetailHandler(List<Member> memberList){
+  public MemberDetailHandler(List<Member> memberList) {
     super(memberList);
-
   }
 
   @Override
@@ -34,6 +29,10 @@ public class MemberDetailHandler extends AbstractMemberHandler  {
     System.out.printf("가입일: %s\n", member.getRegisteredDate());
 
   }
-
-
 }
+
+
+
+
+
+

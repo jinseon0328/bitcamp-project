@@ -1,11 +1,9 @@
 package com.eomcs.pms.domain;
 
-import java.io.Serializable;
 import java.sql.Date;
+import com.eomcs.util.CsvObject;
 
-public class Project implements Serializable {
-
-  private static final long serialVersionUID = 1L;
+public class Project implements CsvObject{
   private int no;
   private String title;
   private String content;
@@ -14,7 +12,43 @@ public class Project implements Serializable {
   private String owner;
   private String members;
 
+  public Project() {}
 
+  public Project (String csv) {
+    String[] fields = csv.split(",");
+    this.setNo(Integer.parseInt(fields[0]));
+    this.setTitle(fields[1]);
+    this.setContent(fields[2]);
+    this.setStartDate(Date.valueOf(fields[3]));
+    this.setEndDate(Date.valueOf(fields[4]));
+    this.setOwner(fields[4]);
+    this.setMembers(fields[5].replace("|", ","));
+  }
+
+  @Override
+  public String toCsvString() {
+    return String.format("%d,%s,%s,%s,%s,%s,%s\n",
+        this.getNo(),
+        this.getTitle(),
+        this.getContent(),
+        this.getStartDate(),
+        this.getEndDate(),
+        this.getOwner(),
+        this.getMembers().replace(",", "|"));
+  }
+
+  public static Project valueOfcsv(String csv) {
+    String[] fields = csv.split(",");
+    Project p = new Project();
+    p.setNo(Integer.parseInt(fields[0]));
+    p.setTitle(fields[1]);
+    p.setContent(fields[2]);
+    p.setStartDate(Date.valueOf(fields[3]));
+    p.setEndDate(Date.valueOf(fields[4]));
+    p.setOwner(fields[4]);
+    p.setMembers(fields[5].replace("|", ","));
+    return p;
+  }
 
   @Override
   public int hashCode() {
@@ -23,8 +57,10 @@ public class Project implements Serializable {
     result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
     result = prime * result + no;
     result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+    result = prime * result + ((title == null) ? 0 : title.hashCode());
     return result;
   }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -46,9 +82,13 @@ public class Project implements Serializable {
         return false;
     } else if (!startDate.equals(other.startDate))
       return false;
+    if (title == null) {
+      if (other.title != null)
+        return false;
+    } else if (!title.equals(other.title))
+      return false;
     return true;
   }
-
 
   public int getNo() {
     return no;
@@ -92,6 +132,11 @@ public class Project implements Serializable {
   public void setMembers(String members) {
     this.members = members;
   }
+
+
+
+
+
 
 
 }
