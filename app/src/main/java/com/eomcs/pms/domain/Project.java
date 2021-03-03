@@ -3,7 +3,7 @@ package com.eomcs.pms.domain;
 import java.sql.Date;
 import com.eomcs.util.CsvObject;
 
-public class Project implements CsvObject{
+public class Project implements CsvObject {
   private int no;
   private String title;
   private String content;
@@ -14,20 +14,26 @@ public class Project implements CsvObject{
 
   public Project() {}
 
-  public Project (String csv) {
+  public Project(String csv) {
     String[] fields = csv.split(",");
     this.setNo(Integer.parseInt(fields[0]));
     this.setTitle(fields[1]);
     this.setContent(fields[2]);
     this.setStartDate(Date.valueOf(fields[3]));
     this.setEndDate(Date.valueOf(fields[4]));
-    this.setOwner(fields[4]);
-    this.setMembers(fields[5].replace("|", ","));
+    this.setOwner(fields[5]);
+    this.setMembers(fields[6].replace("|", ","));
+  }
+
+  @Override
+  public String toString() {
+    return "Project [no=" + no + ", title=" + title + ", content=" + content + ", startDate="
+        + startDate + ", endDate=" + endDate + ", owner=" + owner + ", members=" + members + "]";
   }
 
   @Override
   public String toCsvString() {
-    return String.format("%d,%s,%s,%s,%s,%s,%s\n",
+    return String.format("%d,%s,%s,%s,%s,%s,%s", 
         this.getNo(),
         this.getTitle(),
         this.getContent(),
@@ -37,17 +43,17 @@ public class Project implements CsvObject{
         this.getMembers().replace(",", "|"));
   }
 
-  public static Project valueOfcsv(String csv) {
+  public static Project valueOfCsv(String csv) {
     String[] fields = csv.split(",");
-    Project p = new Project();
-    p.setNo(Integer.parseInt(fields[0]));
-    p.setTitle(fields[1]);
-    p.setContent(fields[2]);
-    p.setStartDate(Date.valueOf(fields[3]));
-    p.setEndDate(Date.valueOf(fields[4]));
-    p.setOwner(fields[4]);
-    p.setMembers(fields[5].replace("|", ","));
-    return p;
+    Project project = new Project();
+    project.setNo(Integer.parseInt(fields[0]));
+    project.setTitle(fields[1]);
+    project.setContent(fields[2]);
+    project.setStartDate(Date.valueOf(fields[3]));
+    project.setEndDate(Date.valueOf(fields[4]));
+    project.setOwner(fields[5]);
+    project.setMembers(fields[6].replace("|", ","));
+    return project;
   }
 
   @Override
@@ -131,12 +137,7 @@ public class Project implements CsvObject{
   }
   public void setMembers(String members) {
     this.members = members;
-  }
-
-
-
-
-
+  }  
 
 
 }
