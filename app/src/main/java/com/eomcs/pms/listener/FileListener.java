@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class FileListener implements ApplicationContextListener {
 
     } catch (Exception e) {
       System.out.printf("%s 파일 데이터 로딩 중 오류 발생!\n", file.getName());
-      return null;
+      return new ArrayList<T>();
     }
   }
 
